@@ -36,7 +36,7 @@ const Home: FC<Props & NextPage> = () => {
         )}
       </div>
     ), (
-      <div key="rpc">
+      <div key="rps">
         <h4>
           #2 Exercise
         </h4>

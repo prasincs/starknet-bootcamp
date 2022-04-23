@@ -15,8 +15,9 @@ const getContractsAddresses = () => {
   }, [setCounterAddress, network]);
   const loadRpsAddress = useCallback(async () => {
     try {
-      const rps = await import(`@starknet-bootcamp/contracts/starknet-deployments/${network}/RockPaperScissors.json`);
-      setRpsAddress(rps.address);
+      // const rps = await import(`@starknet-bootcamp/contracts/starknet-deployments/${network}/RockPaperScissors.json`);
+      //setRpsAddress(rps.address);
+      setRpsAddress("0x02607d407c9ab49109d3dca6e25c0d09c2858d48e1f50c54e943e164327c985f");
     } catch (e) {
       console.log(e);
     }
