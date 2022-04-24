@@ -24,6 +24,20 @@ const config = {
       },
     },
   },
+  starknet: {
+    wallets: {
+      wallet1: {
+        accountName: "wallet1",
+        modulePath: "starkware.starknet.wallets.open_zeppelin.OpenZeppelinAccount",
+        accountPath: "~/crypto/.starknet_accounts"
+      },
+      wallet2: {
+        accountName: "wallet2",
+        modulePath: "starkware.starknet.wallets.open_zeppelin.OpenZeppelinAccount",
+        accountPath: "~/crypto/.starknet_accounts"
+      },
+    },
+  },
   networks: {
     devnet: {
       url: "http://localhost:5000",

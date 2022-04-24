@@ -1,8 +1,9 @@
 import abi from '@starknet-bootcamp/contracts/starknet-artifacts/contracts/Counter.cairo/Counter_abi.json';
-import { useContract, useStarknetCall, useStarknetInvoke, useStarknetTransactionManager } from '@starknet-react/core';
+import { useContract, useStarknetCall, useStarknetInvoke, useStarknetBlock, useStarknetTransactionManager, useStarknet } from '@starknet-react/core';
 import React, { FC, useState } from 'react';
 import { Abi } from 'starknet';
 import { BigNumberish } from 'starknet/dist/utils/number';
+import { compressProgram } from 'starknet/dist/utils/stark';
 import PrimaryButton from '~/components/buttons/PrimaryButton';
 import Style from './counter.module.scss';
 
@@ -12,16 +13,27 @@ interface Props {
 
 const Counter: FC<Props> = ({ address }) => {
   const [amount, setAmount] = useState('1');
-  const { transactions } = useStarknetTransactionManager();
+  const { transactions, refreshTransaction } = useStarknetTransactionManager();
+  const {library} = useStarknet();
   const { contract: counterContract } = useContract({ abi: abi as Abi, address });
   const { data: readData, error: readError, loading: readLoading, refresh: readRefresh } = useStarknetCall({ contract: counterContract, method: 'read', args: [] });
   const { data: incData, loading: incLoading, error: incError, reset: incReset, invoke: incInvoke } = useStarknetInvoke({ contract: counterContract, method: 'increment' });
   const counterAmount = (readData || [])[0] as BigNumberish;
+  let hasSentTransaction = false;
 
   const isWaitingTransaction = (txHash: string | undefined) => {
+    console.log("txHash", txHash);
     if (txHash) {
+      const transactionResponse = library.getTransaction(txHash).then(transaction => {
+        hasSentTransaction = (transaction.status !== 'ACCEPTED_ON_L1' &&
+          transaction.status !== 'ACCEPTED_ON_L2' &&
+          transaction.status !== 'REJECTED');
+        readRefresh();
+      });
       const transaction = transactions.find(tr => tr.transactionHash === txHash);
-      return !!transaction && transaction.status !== 'ACCEPTED_ON_L1' && transaction.status !== 'ACCEPTED_ON_L2' && transaction.status !== 'REJECTED';
+      console.log(transactionResponse, txHash);
+      return !!transaction && hasSentTransaction; //&& transaction.status !== 'ACCEPTED_ON_L1' && transaction.status !== 'ACCEPTED_ON_L2' && transaction.status !== 'REJECTED';
+        // (!!transactionResponse && transactionResponse.status !== 'ACCEPTED_ON_L1' && transactionResponse.status !== 'ACCEPTED_ON_L2' && transactionResponse.status !== 'REJECTED');
     }
     return false;
   }

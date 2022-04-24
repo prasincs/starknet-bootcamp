@@ -12,7 +12,7 @@ const P1 = 1n;
 const P2 = 2n;
 
 describe("RockPaperScissors", function () {
-  this.timeout(60_000);
+  this.timeout(120_000);
 
   let player1: Account;
   let player2: Account;
